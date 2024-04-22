@@ -1,35 +1,29 @@
 package Pages;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.ElementsCollection;
+
+import static com.codeborne.selenide.Condition.visible;
 import org.openqa.selenium.By;
 import org.junit.jupiter.api.Assertions;
 import static com.codeborne.selenide.Selenide.*;
 
-public class MainPage {
-    private final String login = "technopol53";
-    private final String password = "technopolisPassword";
-    private final String name = "technopol53 technopol53";
-    private final SelenideElement username = $(By.xpath("//div[@class='tico ellip']"));
-    private final SelenideElement navigationToolBar = $(By.xpath("//div[@data-l='t,navigationToolbar']"));
-    private final ElementsCollection navigationToolBarButtons = $$(By.xpath("//*[contains(@class,'toolbar_nav_a')]"));
-    private final SelenideElement openMessengerButton = $(By.xpath("//*[@id='msg_toolbar_button']"));
-    private final SelenideElement messengerTitle = $(By.xpath("//slot[@name='title']"));
+public class MainPage implements BasePage{
+    private static final By username = By.xpath("//div[@class='tico ellip']");
+    private static final By navigationToolBar = By.xpath("//div[@data-l='t,navigationToolbar']");
+    private static final By openMessengerButton = By.xpath("//*[@id='msg_toolbar_button']");
+    private static final By userFriends = By.xpath("//*[@data-l=\"t,userFriend\"]//div");
 
-    public MainPage openLogin() {
-        LoginPage loginPage = new LoginPage();
-        Selenide.open("/");
-        loginPage.signIn(login, password);
-        return this;
+    public MainPage() {
+        check();
     }
-    public void checkMainPage() {
-        Assertions.assertEquals(name, username.getText());
-        navigationToolBar.shouldBe();
-        Assertions.assertEquals(8, navigationToolBarButtons.size());
+    @Override
+    public void check() {
+        String name = "technopol53 technopol53";
+        Assertions.assertEquals(name, $(username).getText());
+        $(navigationToolBar).shouldBe(visible.because("Навигационная панель должна быть на страницем пользователя"));
     }
     public void clickMessenger() {
-        openMessengerButton.click();
-        messengerTitle.shouldBe();
-        Assertions.assertEquals("Сообщения", messengerTitle.getText());
+        $(openMessengerButton).shouldBe(visible.because("Раздел сообщений должен быть на странице пользователя")).click();
+    }
+    public void navigateIntoFriends(){
+        $(userFriends).shouldBe(visible.because("Раздел друзей должен быть на странице пользователя")).click();
     }
 }
