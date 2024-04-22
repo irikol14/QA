@@ -1,39 +1,44 @@
 package Pages;
+
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import org.openqa.selenium.By;
-import org.junit.jupiter.api.Assertions;
+import static com.codeborne.selenide.Condition.text;
 
-public class LoginPage {
-    private final SelenideElement loginInput = $(By.xpath("//*[@id=\"field_email\"]"));
-    private final SelenideElement passwordInput = $(By.xpath("//*[@id=\"field_password\"]"));
-    private final SelenideElement loginButton = $(By.xpath("//div[@class='button-pro __wide']"));
-    private final SelenideElement loginErrorText = $(By.xpath("//div[@class='input-e login_error']"));
+public class LoginPage implements BasePage{
+    private static final By loginInput = By.xpath("//*[@id=\"field_email\"]");
+    private static final By passwordInput = By.xpath("//*[@id=\"field_password\"]");
+    private static final By loginButton = By.xpath("//*[@data-l='t,sign_in']");
+    private static final By loginErrorText = By.xpath("//div[@class='input-e login_error']");
 
+    public LoginPage() {
+        open().check();
+    }
+    @Override
+    public void check() {
+        $(loginInput).shouldBe(visible.because("Поле ввода логина должно быть на странице входа"));
+        $(passwordInput).shouldBe(visible.because("Поле ввода пароля должно быть на странице входа"));
+        $(loginButton).shouldBe(visible.because("Кнопка входа должна быть на странице входа"));
+    }
     public LoginPage open() {
         Selenide.open("/");
         return this;
     }
-    public void checkLoginPage() {
-        loginInput.shouldBe();
-        passwordInput.shouldBe();
-        loginButton.shouldBe();
-    }
     public void signIn(String login, String password) {
-        loginInput.setValue(login);
-        passwordInput.setValue(password).pressEnter();
+        $(loginInput).setValue(login);
+        $(passwordInput).setValue(password).pressEnter();
     }
-    public void checkIncorrectLoginOrPassword() {
-        loginErrorText.shouldBe();
-        Assertions.assertEquals("Неправильно указан логин и/или пароль", loginErrorText.getText());
+    public static boolean checkIncorrectLoginOrPassword() {
+        $(loginErrorText).shouldBe(visible.because("Должен быть отображен текст 'Неправильно указан логин и/или пароль'")).shouldHave(text("Неправильно указан логин и/или пароль"));
+        return false;
     }
-    public void checkEmptyLogin() {
-        loginErrorText.shouldBe();
-        Assertions.assertEquals("Введите логин", loginErrorText.getText());
+    public static boolean checkEmptyLogin() {
+        $(loginErrorText).shouldBe(visible.because("Должен быть отображен текст 'Введите логин'")).shouldHave(text("Введите логин"));
+        return false;
     }
-    public void checkEmptyPassword() {
-        loginErrorText.shouldBe();
-        Assertions.assertEquals("Введите пароль", loginErrorText.getText());
+    public static boolean checkEmptyPassword() {
+        $(loginErrorText).shouldBe(visible.because("Должен быть отображен текст 'Введите пароль'")).shouldHave(text("Введите пароль"));
+        return false;
     }
 }
